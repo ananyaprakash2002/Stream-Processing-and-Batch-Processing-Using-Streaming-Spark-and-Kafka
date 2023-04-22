@@ -15,8 +15,7 @@ produce/consume choosing >=3 topics].
   - Example of streaming input data: Twitter feed (tweets), newsfeed, etc.
   -  Computation examples: Count of tweets within the window,
   -  grouping by #hashtags, etc.
-  -  Min, max or other aggregate functions on numeric data
-  -  within each tumbling window.
+  -  Min, max or other aggregate functions on numeric data within each tumbling window.
 
 ### Consumption: Storage of tweets into a database for further processing like batch mode processing.
 Note: Window size should be significant and suitable to your chosen domain problem.
