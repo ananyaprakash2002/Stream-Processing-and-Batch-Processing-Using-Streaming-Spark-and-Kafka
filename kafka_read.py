@@ -1,6 +1,6 @@
 from pyspark.sql import SparkSession   
 from pyspark.sql.functions import split, udf, col
-from pyspark.sql.types import StructType, StructField, StringType, IntegerType
+from pyspark.sql.types import StructType, StructField, StringType
 import mysql.connector
 import re
 
@@ -62,8 +62,8 @@ df = spark \
 
 query = df.selectExpr("CAST(value AS STRING)", "topic")
 df1 = query \
-    .withColumn('topic1', split(query['value'], '\s+', limit=3).getItem(0)) \
-    .withColumn('topic2', split(query['value'], '\s+', limit=3).getItem(1)) \
+    .withColumn('tweet', split(query['value'], '\s+', limit=3).getItem(0)) \
+    .withColumn('sentiment', split(query['value'], '\s+', limit=3).getItem(1)) \
     .withColumn('topic3', split(query['value'], '\s+', limit=3).getItem(2))
 
 
