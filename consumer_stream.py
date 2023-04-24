@@ -37,7 +37,7 @@ filtered_df = spark.sql("SELECT * FROM tweets WHERE hashtags != '' AND topic = '
 # Grouping tweets by a 30-minute window and counting the number of tweets in each window
 count_df = filtered_df \
             .groupBy(window("timestamp","30 minutes")) \
-            .agg(func.count("hashtags").alias("count"))
+            .agg(func.count("hashtags").alias("count of hastags"))
 
 # Starting the streaming query to write the results to the console
 query = count_df \
