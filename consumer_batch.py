@@ -12,7 +12,7 @@ df = spark \
     .option("subscribe", "tweets") \
     .option("startingOffsets", "earliest") \
     .option("endingOffsets", "latest") \
-    .option("maxOffsetsPerTrigger", 10000) \
+    .option("includeHeaders", "true") \
     .load()
 
 # Extract the tweet and hashtags from the Kafka message value
@@ -20,18 +20,22 @@ df1 = df.selectExpr("CAST(value AS STRING)") \
         .withColumn('tweet', split(df['value'], '\s+', limit=3).getItem(1)) \
         .withColumn('hashtags', split(df['value'], '\s+', limit=3).getItem(2))
 
-# Filter the dataframe to include only tweets with a particular hashtag
-filtered_df = df1.filter(df1.hashtags == '#myhashtag')
+# Create a temporary view of the dataframe
+df1.createOrReplaceTempView("tweets")
 
-# Group the tweets by a 15-minute window and count the number of tweets in each window
-count_df = filtered_df \
-            .groupBy(window(df1.timestamp, "15 minutes")) \
-            .agg(count("tweet").alias("count"))
+# Filter the dataframe to include only positive tweets
+positive_df = spark.sql("SELECT * FROM tweets WHERE topic = 'positive'")
+
+# Group the tweets by a 15-minute window and count the number of hashtags in each window
+count_df = positive_df \
+            .groupBy(window("timestamp", "15 minutes"), "hashtags") \
+            .agg(func.count("hashtags").alias("count"))
 
 # Write the results to a CSV file
 count_df \
     .coalesce(1) \
     .write \
+    .format("csv") \
     .mode("overwrite") \
     .option("header", "true") \
-    .csv("/path/to/output/folder")
+    .save("/path/to/output/folder")
