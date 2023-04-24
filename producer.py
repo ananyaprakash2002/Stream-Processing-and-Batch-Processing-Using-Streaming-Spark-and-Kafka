@@ -1,42 +1,42 @@
+import numpy as np
 import pandas as pd
 from kafka import KafkaProducer
 import time
-import numpy as np
 import json
 
-KAFKA_TOPIC_1 = "Positive"
-KAFKA_TOPIC_2 = "Negative"
-KAFKA_TOPIC_3 = "Neutral" 
+KAFKA_TOPIC_1 = "positive"
+KAFKA_TOPIC_2 = "negative"
+KAFKA_TOPIC_3 = "neutral" 
 KAFKA_BOOTSTRAP_SERVERS_CONS = "localhost:9092"
 
-def send_three_topic_message(tweet_list):
-    kafka_producer_obj = KafkaProducer(
+def send_three_topics(tweet_list):
+    kafka_producer = KafkaProducer(
         bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS_CONS,
         value_serializer=lambda x: json.dumps(x).encode("utf-8"))
 
     for message in tweet_list:
-        tweet_kafka = message["tweet"]
-        sentiment_kafka = str(message["sentiment"])
+        kafka_tweet= message["tweet"]
+        kafka_sentiment= str(message["sentiment"])
 
-        if sentiment_kafka == 'positive':
-            kafka_producer_obj.send(KAFKA_TOPIC_1, value=tweet_kafka)
+        if kafka_sentiment == 'positive':
+            kafka_producer.send(KAFKA_TOPIC_1, value=kafka_tweet)
 
-        elif sentiment_kafka == 'negative':
-            kafka_producer_obj.send(KAFKA_TOPIC_2, value=tweet_kafka)
+        elif kafka_sentiment == 'negative':
+            kafka_producer.send(KAFKA_TOPIC_2, value=kafka_tweet)
 
         else:
-            kafka_producer_obj.send(KAFKA_TOPIC_3, value=tweet_kafka)
+            kafka_producer.send(KAFKA_TOPIC_3, value=kafka_tweet)
 
-        print("Tweet: ", tweet_kafka)
-        print("Sentiment: ", sentiment_kafka)
+        print("Tweet: ", kafka_tweet)
+        print("Sentiment: ", kafka_sentiment)
         time.sleep(2)
-    kafka_producer_obj.flush()
-    kafka_producer_obj.close()
+    kafka_producer.flush()
+    kafka_producer.close()
 
 if __name__ == "__main__":
-    print("Kafka Producer Application Started ... ")
-    filepath = "/path/to/your/dataset.csv"
-    tweet_df = pd.read_csv(filepath, usecols=['tweet', 'sentiment'])
+    print("Kafka Producer has Started ... ")
+    filepath = "/home/pes1ug20cs045/DBT_project/dataset.xls"
+    tweet_df = pd.read_excel(filepath, usecols=['tweet', 'sentiment'],header=0)
     tweet_list = tweet_df.to_dict(orient="records")
-    send_three_topic_message(tweet_list)
-    print("Kafka Producer Application Completed. ")
+    send_three_topics(tweet_list)
+    print("Kafka Producer has Completed!. ")

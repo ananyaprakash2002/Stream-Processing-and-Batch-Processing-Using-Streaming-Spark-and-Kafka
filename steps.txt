@@ -1,0 +1,15 @@
+1] cd $HADOOP_HOME -> ./sbin/start-all.sh
+2] cd $SPARK_HOME ->  ./sbin/start-all.sh
+3] cd $KAFKA_HOME  -> ./bin/zookeeper-server-start.sh config/zookeeper.properties
+                   -> ./bin/kafka-server-start.sh config/server.properties
+
+4] Go to the directory containing producer.py
+Run this in another console: python3 produce_tweet.py
+                            python3 consumer_stream.py
+
+/*******************************
+{
+    wanna see the topics in kafka : ./bin/kafka-topics.sh --bootstrap-server localhost:9092 --list
+    to delete topics: ./bin/kafka-topics.sh --bootstrap-server localhost:9092 --delete --topic <topic_name>
+}
+*************************************/
